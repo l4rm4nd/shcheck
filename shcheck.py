@@ -266,7 +266,7 @@ def parse_nmapfile(nfile):
                 line = line.replace("{port}", str(service.port))
                 line = line.replace("{state}", str(service.state))
                 urls.append(line)
-                return list(dict.fromkeys(urls))
+    return list(dict.fromkeys(urls))
 
 def main(options, targets):
 
