@@ -30,7 +30,7 @@ Options:
   --proxy=PROXY_URL     Set a proxy (Ex: http://127.0.0.1:8080)
   --hfile=PATH_TO_FILE  Load a list of hosts from a flat file
   --nfile=PATH_TO_FILE  Use http/https urls extracted from an nmap xml file
-  --audit               Print targets urls with missing headers
+  --audit               Print target urls with missing headers group by header name
   --colours=COLOURS     Set up a colour profile [dark/light/none]
   --colors=COLOURS      Alias for colours for US English
 ```
