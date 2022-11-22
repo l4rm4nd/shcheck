@@ -1,44 +1,8 @@
 # shcheck - Security Header Check
 
 <p align="center">
-    <a href="https://pypi.org/project/shcheck/"><img alt="PyPI" src="https://img.shields.io/pypi/v/shcheck"></a>
-    <a href="https://pypi.org/project/shcheck/"><img alt="Pypi" src="https://img.shields.io/pypi/dm/shcheck"></a>
-    <a href="#"><img alt="Updated" src="https://img.shields.io/github/last-commit/santoru/shcheck?label=updated"></a>
     <img src="screenshot.png" alt="Output on Facebook" />
 </p>
-
-## Check security headers on a target website
-
-I did this tool to help me to check which security headers are enabled on certain websites.
-
-The tool is very simple and it's the result of few minutes of coding.
-
-It just check headers and print a report about which are enabled and which not
-
-I think there is a lot to improve, and I will be grateful if somebody wants to help
-
-## How to run:
-
-### Pypi
-```bash
-pip3 install shcheck
-shcheck.py https://insecurity.blog
-```
-
-### Docker
-First build your docker container using something like this: 
-
-`docker build -t shcheck .`
-
-Then simply run your docker container using something like this where you specify which website you want to check headers on: 
-
-`docker run -it --rm shcheck https://insecurity.blog`
-
-### From source
-```bash
-git clone https://github.com/santoru/shcheck && cd shcheck
-./shcheck.py https://insecurity.blog
-```
 
 ## Usage
 ```
@@ -63,3 +27,15 @@ Options:
   --colours=COLOURS     Set up a colour profile [dark/light/none]
   --colors=COLOURS      Alias for colours for US English
 ```
+
+## Docker Run Examples
+````
+# scan a single url
+docker run --rm l4rm4nd/shcheck:latest <URL>
+
+# scan multiple urls by using a urls.txt file (colored output)
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --hfile /app/urls/urls.txt
+
+# scan multiple urls by using a urls.txt file (json output + audit)
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest -d -g -j -k --hfile /app/urls/urls.txt
+````
