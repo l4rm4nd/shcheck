@@ -27,6 +27,7 @@ import ssl
 import os
 import json
 from optparse import OptionParser
+from libnmap.parser import NmapParser
 
 
 class darkcolours:
@@ -170,21 +171,21 @@ def normalize(target):
 def print_error(target, e):
     sys.stdout = sys.__stdout__
     if isinstance(e, ValueError):
-        if not options.json_output:
+        if not options.json_output and not options.audit:
             print("Unknown url type")
 
     if isinstance(e, urllib.error.HTTPError):
-        if not options.json_output:
+        if not options.json_output and not options.audit:
             print("[!] URL Returned an HTTP error: {}".format(
                 colorize(str(e.code), 'error')))
 
     if isinstance(e, urllib.error.URLError):
         if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
-            if not options.json_output:
+            if not options.json_output and not options.audit:
                 print("SSL: Certificate validation error.\nIf you want to \
     ignore it run the program with the \"-d\" option.")
         else:
-            if not options.json_output:
+            if not options.json_output and not options.audit:
                 print("Target host {} seems to be unreachable ({})".format(target, e.reason))
             else:
                 obj = {"target":target, "reason":e.reason}
@@ -242,6 +243,31 @@ def report(target, safe, unsafe):
     log("")
 
 
+def parse_nmapfile(nfile):
+    try:
+        report = NmapParser.parse_fromfile(nfile)
+        urls = []
+    except IOError:
+        print("Error: Nmap XMP file %s not found. Quitting!" % nfile)
+        sys.exit(1)
+
+    for host in report.hosts:
+        for service in host.services:
+            filtered_services = "http,https,https-alt,https-alt"
+            if (service.state == "open") and (service.service in filtered_services.split(",")):
+                line = "{service}{s}://{hostname}:{port}"
+                line = line.replace("{xmlfile}", nfile)
+                line = line.replace("{hostname}", host.address if not host.hostnames else host.hostnames[0]) # TODO: Fix naive code.
+                line = line.replace("{hostnames}", host.address if not host.hostnames else ", ".join(list(set(host.hostnames)))) # TODO: Fix naive code.
+                line = line.replace("{ip}", host.address)
+                line = line.replace("{service}", service.service)
+                line = line.replace("{s}", "s" if service.tunnel == "ssl" else "")
+                line = line.replace("{protocol}", service.protocol)
+                line = line.replace("{port}", str(service.port))
+                line = line.replace("{state}", str(service.state))
+                urls.append(line)
+                return list(dict.fromkeys(urls))
+
 def main(options, targets):
 
     # Getting options
@@ -252,7 +278,11 @@ def main(options, targets):
     cache_control = options.cache_control
     show_deprecated = options.show_deprecated
     hfile = options.hfile
+    nfile = options.nfile
     json_output = options.json_output
+
+    if options.audit:
+        json_output = True
 
     # Disabling printing if json output is requested
     if json_output:
@@ -280,6 +310,10 @@ def main(options, targets):
     if hfile is not None:
         with open(hfile) as f:
             targets = f.read().splitlines()
+
+    if nfile is not None:
+        targets = parse_nmapfile(nfile)
+        print(targets)
 
     json_out = {}
     for target in targets:
@@ -482,6 +516,12 @@ if __name__ == "__main__":
     parser.add_option("--hfile", dest="hfile",
                       help="Load a list of hosts from a flat file",
                       metavar="PATH_TO_FILE")
+    parser.add_option("--nfile", dest="nfile",
+                      help="Use http/https urls extracted from an nmap xml file",
+                      metavar="PATH_TO_FILE")
+    parser.add_option("--audit", dest="audit",
+                      default=False, help="Print targets urls with missing headers",
+                      action="store_true")
     parser.add_option("--colours", dest="colours",
                       help="Set up a colour profile [dark/light/none]",
                       default="dark")
@@ -489,7 +529,7 @@ if __name__ == "__main__":
                       help="Alias for colours for US English")
     (options, args) = parser.parse_args()
 
-    if len(args) < 1 and options.hfile is None:
+    if len(args) < 1 and options.hfile is None and options.nfile is None:
         parser.print_help()
         sys.exit(1)
     main(options, args)
