@@ -99,6 +99,7 @@ cache_headers = {
 }
 
 headers = {}
+skipped = []
 
 
 def banner():
@@ -169,20 +170,26 @@ def normalize(target):
 def print_error(target, e):
     sys.stdout = sys.__stdout__
     if isinstance(e, ValueError):
-        print("Unknown url type")
+        if not options.json_output:
+            print("Unknown url type")
 
     if isinstance(e, urllib.error.HTTPError):
-        print("[!] URL Returned an HTTP error: {}".format(
-              colorize(str(e.code), 'error')))
+        if not options.json_output:
+            print("[!] URL Returned an HTTP error: {}".format(
+                colorize(str(e.code), 'error')))
 
     if isinstance(e, urllib.error.URLError):
         if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
-            print("SSL: Certificate validation error.\nIf you want to \
+            if not options.json_output:
+                print("SSL: Certificate validation error.\nIf you want to \
     ignore it run the program with the \"-d\" option.")
         else:
-            print("Target host {} seems to be unreachable ({})".format(target, e.reason))
-
-
+            if not options.json_output:
+                print("Target host {} seems to be unreachable ({})".format(target, e.reason))
+            else:
+                obj = {"target":target, "reason":e.reason}
+                skipped.append(obj)
+                
 def check_target(target, options):
     '''
     Just put a protocol to a valid IP and check if connection works,
@@ -369,8 +376,72 @@ Value: {})".format(
 
     if json_output:
         sys.stdout = sys.__stdout__
-        print(json.dumps(json_out))
+        data = json_out
+        #print(json.dumps(data))
 
+        # Initialize Arrays
+        MISSING_CONTENT_TYPES_ARRAY=[]
+        MISSING_HSTS_ARRAY=[]
+        MISSING_XFRAME_ARRAY=[]
+        MISSING_REFERER_ARRAY=[]
+        MISSING_PERMISSIONS_ARRAY=[]
+        MISSING_CSP_ARRAY=[]
+
+        print()
+        print("[SUCCESS] - Analyzed the following targets:")
+
+        for url_object in data:
+            url=url_object
+            print(url)
+            url_missing_arr=data[url]["missing"]
+
+            if "Strict-Transport-Security" in url_missing_arr:
+                MISSING_HSTS_ARRAY.append(url)
+            if "X-Frame-Options" in url_missing_arr:
+                MISSING_XFRAME_ARRAY.append(url)
+            if "X-Content-Type-Options" in url_missing_arr:
+                MISSING_CONTENT_TYPES_ARRAY.append(url)
+            if "Referrer-Policy" in url_missing_arr:
+                MISSING_REFERER_ARRAY.append(url)
+            if "Permissions-Policy" in url_missing_arr:
+                MISSING_PERMISSIONS_ARRAY.append(url)
+            if "Content-Security-Policy" in url_missing_arr:
+                MISSING_CSP_ARRAY.append(url)
+
+        if (len(skipped) > 0):
+            print("")
+            print("[FAIL] - Following targets failed:")
+            print(skipped)
+            print()
+        print("------------------EVALUATION---------------------------")
+        ### Sort the arrays
+        MISSING_CONTENT_TYPES_ARRAY.sort()
+        MISSING_HSTS_ARRAY.sort()
+        MISSING_XFRAME_ARRAY.sort()
+        MISSING_REFERER_ARRAY.sort()
+        MISSING_PERMISSIONS_ARRAY.sort()
+        MISSING_CSP_ARRAY.sort()
+
+
+        print()
+        print("[Missing HTTP Strict Transport Security (HSTS)]:")
+        print(*MISSING_HSTS_ARRAY, sep ="\n")
+        print("\n\n")
+        print("[Missing X-Frame-Options (XFO)]:")
+        print(*MISSING_XFRAME_ARRAY, sep ="\n")
+        print("\n\n")
+        print("[Missing X-Content-Type-Options (XCTO)]:")
+        print(*MISSING_CONTENT_TYPES_ARRAY, sep ="\n")
+        print("\n\n")
+        print("[Missing Content-Security-Policy (CSP)]:")
+        print(*MISSING_CSP_ARRAY, sep ="\n")
+        print("\n\n")
+        print("[Missing Permissions-Policy]:")
+        print(*MISSING_PERMISSIONS_ARRAY, sep ="\n")
+        print("\n\n")
+        print("[Missing Referer-Policy]:")
+        print(*MISSING_REFERER_ARRAY, sep ="\n")
+        print("\n\n")
 
 if __name__ == "__main__":
 
