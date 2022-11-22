@@ -1,10 +1,9 @@
-FROM python:3.7-alpine3.10
+FROM python:3.9-alpine
+LABEL Maintainer="LRVT"
 
-# Copy current directory
-COPY . /shcheck
+COPY . /app
 
-# Create working directory
-WORKDIR /shcheck
+WORKDIR /app
+ENTRYPOINT [ "python", "shcheck.py"]
 
-# Run command
-ENTRYPOINT ["python",  "shcheck.py"]
+CMD [ "python", "shcheck.py", "--help"]
