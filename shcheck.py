@@ -410,7 +410,8 @@ Value: {})".format(
 
         print("")
         print("[FAIL] - Following targets failed:")
-        print(skipped)
+        for failed_url in skipped:
+            print(failed_url)
         print()
         print("------------------EVALUATION---------------------------")
         ### Sort the arrays
