@@ -408,11 +408,10 @@ Value: {})".format(
             if "Content-Security-Policy" in url_missing_arr:
                 MISSING_CSP_ARRAY.append(url)
 
-        if (len(skipped) > 0):
-            print("")
-            print("[FAIL] - Following targets failed:")
-            print(skipped)
-            print()
+        print("")
+        print("[FAIL] - Following targets failed:")
+        print(skipped)
+        print()
         print("------------------EVALUATION---------------------------")
         ### Sort the arrays
         MISSING_CONTENT_TYPES_ARRAY.sort()
