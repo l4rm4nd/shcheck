@@ -24,6 +24,8 @@ Options:
   -k, --deprecated      Display deprecated headers
   --proxy=PROXY_URL     Set a proxy (Ex: http://127.0.0.1:8080)
   --hfile=PATH_TO_FILE  Load a list of hosts from a flat file
+  --nfile=PATH_TO_FILE  Use http/https urls extracted from an nmap xml file
+  --audit               Print targets urls with missing headers
   --colours=COLOURS     Set up a colour profile [dark/light/none]
   --colors=COLOURS      Alias for colours for US English
 ```
@@ -36,6 +38,9 @@ docker run --rm l4rm4nd/shcheck:latest <URL>
 # scan multiple urls by using a urls.txt file (colored output)
 docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --hfile /app/urls/urls.txt
 
-# scan multiple urls by using a urls.txt file (json output + audit)
-docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest -d -g -j -k --hfile /app/urls/urls.txt
+# scan multiple urls by using a urls.txt file (show missing headers as grouped list)
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --hfile /app/urls/urls.txt --audit
+
+# scan multiple urls by using an nmap xml file (show missing headers as grouped list)
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --nfile /app/urls/nmap-results.xml --audit
 ````
