@@ -2,7 +2,7 @@
 
 Forked from original repo [shcheck](https://github.com/santoru/shcheck) and added following features:
 - added new `--audit` cli flag to display urls with missing headers grouped by each security header
-- added new `--nfile` cli flag to support passing an nmap xml file. The nmap xml will be parsed by [nmap-query-xml](https://github.com/honze-net/nmap-query-xml) and all http(s) service urls are extracted for analyzation.
+- added new `--nfile` cli flag to support passing an nmap xml file. The nmap xml will be parsed by [nmap-query-xml](https://github.com/honze-net/nmap-query-xml) and (nearly) all http(s) service urls are extracted for analyzation.
 - adjusted the Dockerfile and configured automatic builds by GitHub Actions. You can use the Docker image `l4rm4nd/shcheck:latest` from DockerHub if you want
 
 <p align="center">
