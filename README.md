@@ -2,8 +2,8 @@
 
 Forked from original repo [shcheck](https://github.com/santoru/shcheck) and added following features:
 - added new `--audit` cli flag to display urls with missing headers grouped by header
-- added new `--nfile` cli flag to support passing an nmap xml file. The nmap xml will be parsed by [nmap-query-xml](https://github.com/honze-net/nmap-query-xml) by honze-net
-- adjusted the Dockerfile and configured automatic builds by GitHub Actions. You can use the Docker image l4rm4nd/shcheck:latest from DockerHub if you want
+- added new `--nfile` cli flag to support passing an nmap xml file. The nmap xml will be parsed by [nmap-query-xml](https://github.com/honze-net/nmap-query-xml) and all http(s) service urls are extracted for analyzation.
+- adjusted the Dockerfile and configured automatic builds by GitHub Actions. You can use the Docker image `l4rm4nd/shcheck:latest` from DockerHub if you want
 
 <p align="center">
     <img src="screenshot.png" alt="Output on Facebook" />
@@ -38,14 +38,14 @@ Options:
 ## Docker Run Examples
 ````
 # scan a single url
-docker run --rm l4rm4nd/shcheck:latest <URL>
+docker run --rm l4rm4nd/shcheck:latest -d -g -k <URL>
 
 # scan multiple urls by using a urls.txt file (colored output)
-docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --hfile /app/urls/urls.txt
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest -d -g -k --hfile /app/urls/urls.txt
 
 # scan multiple urls by using a urls.txt file (show urls with missing headers grouped by header)
-docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --hfile /app/urls/urls.txt --audit
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest -d -g -k --hfile /app/urls/urls.txt --audit
 
 # scan multiple urls by using an nmap xml file (show urls with missing headers grouped by header)
-docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest --nfile /app/urls/nmap-results.xml --audit
+docker run -v ${PWD}:/app/urls --rm l4rm4nd/shcheck:latest -d -g -k --nfile /app/urls/nmap-results.xml --audit
 ````
