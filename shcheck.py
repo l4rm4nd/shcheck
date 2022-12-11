@@ -236,7 +236,7 @@ def parse_nmapfile(nfile):
         report = NmapParser.parse_fromfile(nfile)
         urls = []
     except IOError:
-        print("Error: Nmap XMP file %s not found. Quitting!" % nfile)
+        print("Error: Nmap XML file %s not found. Quitting!" % nfile)
         sys.exit(1)
 
     for host in report.hosts:
