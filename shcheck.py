@@ -399,71 +399,74 @@ Value: {})".format(
     if json_output:
         sys.stdout = sys.__stdout__
         data = json_out
-        #print(json.dumps(data))
 
-        # Initialize Arrays
-        MISSING_CONTENT_TYPES_ARRAY=[]
-        MISSING_HSTS_ARRAY=[]
-        MISSING_XFRAME_ARRAY=[]
-        MISSING_REFERER_ARRAY=[]
-        MISSING_PERMISSIONS_ARRAY=[]
-        MISSING_CSP_ARRAY=[]
+        if (not options.audit):
+            print(json.dumps(data))
+        else:
+            print(json.dumps(data))
+            # Initialize Arrays
+            MISSING_CONTENT_TYPES_ARRAY=[]
+            MISSING_HSTS_ARRAY=[]
+            MISSING_XFRAME_ARRAY=[]
+            MISSING_REFERER_ARRAY=[]
+            MISSING_PERMISSIONS_ARRAY=[]
+            MISSING_CSP_ARRAY=[]
 
-        print()
-        print("[SUCCESS] - Analyzed the following targets:")
+            print()
+            print("[SUCCESS] - Analyzed the following targets:")
 
-        for url_object in data:
-            url=url_object
-            print(url)
-            url_missing_arr=data[url]["missing"]
+            for url_object in data:
+                url=url_object
+                print(url)
+                url_missing_arr=data[url]["missing"]
 
-            if "Strict-Transport-Security" in url_missing_arr:
-                MISSING_HSTS_ARRAY.append(url)
-            if "X-Frame-Options" in url_missing_arr:
-                MISSING_XFRAME_ARRAY.append(url)
-            if "X-Content-Type-Options" in url_missing_arr:
-                MISSING_CONTENT_TYPES_ARRAY.append(url)
-            if "Referrer-Policy" in url_missing_arr:
-                MISSING_REFERER_ARRAY.append(url)
-            if "Permissions-Policy" in url_missing_arr:
-                MISSING_PERMISSIONS_ARRAY.append(url)
-            if "Content-Security-Policy" in url_missing_arr:
-                MISSING_CSP_ARRAY.append(url)
+                if "Strict-Transport-Security" in url_missing_arr:
+                    MISSING_HSTS_ARRAY.append(url)
+                if "X-Frame-Options" in url_missing_arr:
+                    MISSING_XFRAME_ARRAY.append(url)
+                if "X-Content-Type-Options" in url_missing_arr:
+                    MISSING_CONTENT_TYPES_ARRAY.append(url)
+                if "Referrer-Policy" in url_missing_arr:
+                    MISSING_REFERER_ARRAY.append(url)
+                if "Permissions-Policy" in url_missing_arr:
+                    MISSING_PERMISSIONS_ARRAY.append(url)
+                if "Content-Security-Policy" in url_missing_arr:
+                    MISSING_CSP_ARRAY.append(url)
 
-        print("")
-        print("[FAIL] - Following targets failed:")
-        for failed_url in skipped:
-            print(failed_url)
-        print()
-        print("------------------EVALUATION---------------------------")
-        ### Sort the arrays
-        MISSING_CONTENT_TYPES_ARRAY.sort()
-        MISSING_HSTS_ARRAY.sort()
-        MISSING_XFRAME_ARRAY.sort()
-        MISSING_REFERER_ARRAY.sort()
-        MISSING_PERMISSIONS_ARRAY.sort()
-        MISSING_CSP_ARRAY.sort()
+            print("")
+            print("[FAIL] - Following targets failed:")
+            for failed_url in skipped:
+                print(failed_url)
+            print()
+            print("------------------EVALUATION---------------------------")
+            ### Sort the arrays
+            MISSING_CONTENT_TYPES_ARRAY.sort()
+            MISSING_HSTS_ARRAY.sort()
+            MISSING_XFRAME_ARRAY.sort()
+            MISSING_REFERER_ARRAY.sort()
+            MISSING_PERMISSIONS_ARRAY.sort()
+            MISSING_CSP_ARRAY.sort()
 
 
-        print()
-        print("[Missing HTTP Strict Transport Security (HSTS)]:")
-        print(*MISSING_HSTS_ARRAY, sep ="\n")
-        print("\n\n")
-        print("[Missing X-Frame-Options (XFO)]:")
-        print(*MISSING_XFRAME_ARRAY, sep ="\n")
-        print("\n\n")
-        print("[Missing X-Content-Type-Options (XCTO)]:")
-        print(*MISSING_CONTENT_TYPES_ARRAY, sep ="\n")
-        print("\n\n")
-        print("[Missing Content-Security-Policy (CSP)]:")
-        print(*MISSING_CSP_ARRAY, sep ="\n")
-        print("\n\n")
-        print("[Missing Permissions-Policy]:")
-        print(*MISSING_PERMISSIONS_ARRAY, sep ="\n")
-        print("\n\n")
-        print("[Missing Referer-Policy]:")
-        print(*MISSING_REFERER_ARRAY, sep ="\n")
-        print("\n\n")
+            print()
+            print("[Missing HTTP Strict Transport Security (HSTS)]:")
+            print(*MISSING_HSTS_ARRAY, sep ="\n")
+            print("\n\n")
+            print("[Missing X-Frame-Options (XFO)]:")
+            print(*MISSING_XFRAME_ARRAY, sep ="\n")
+            print("\n\n")
+            print("[Missing X-Content-Type-Options (XCTO)]:")
+            print(*MISSING_CONTENT_TYPES_ARRAY, sep ="\n")
+            print("\n\n")
+            print("[Missing Content-Security-Policy (CSP)]:")
+            print(*MISSING_CSP_ARRAY, sep ="\n")
+            print("\n\n")
+            print("[Missing Permissions-Policy]:")
+            print(*MISSING_PERMISSIONS_ARRAY, sep ="\n")
+            print("\n\n")
+            print("[Missing Referer-Policy]:")
+            print(*MISSING_REFERER_ARRAY, sep ="\n")
+            print("\n\n")
 
 if __name__ == "__main__":
 
