@@ -241,7 +241,7 @@ def parse_nmapfile(nfile):
 
     for host in report.hosts:
         for service in host.services:
-            filtered_services = "http,https,https-alt,https-alt"
+            filtered_services = "http,http-alt,http-mgmt,http-proxy,http-rpc-epmap,https,https-alt,https-wmap,http-wmap,httpx"
             if (service.state == "open") and (service.service in filtered_services.split(",")):
                 line = "{service}{s}://{hostname}:{port}"
                 line = line.replace("{xmlfile}", nfile)
