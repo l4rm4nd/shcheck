@@ -253,6 +253,12 @@ def parse_nmapfile(nfile):
                 line = line.replace("{protocol}", service.protocol)
                 line = line.replace("{port}", str(service.port))
                 line = line.replace("{state}", str(service.state))
+                line = line.replace("-alt", "")
+                line = line.replace("-mgmt", "")
+                line = line.replace("-proxy", "")
+                line = line.replace("-rpc-epmap", "")
+                line = line.replace("-wmap", "")
+                line = line.replace("httpx", "http")                
                 urls.append(line)
     return list(dict.fromkeys(urls))
 
