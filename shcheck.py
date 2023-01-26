@@ -258,7 +258,8 @@ def parse_nmapfile(nfile):
                 line = line.replace("-proxy", "")
                 line = line.replace("-rpc-epmap", "")
                 line = line.replace("-wmap", "")
-                line = line.replace("httpx", "http")                
+                line = line.replace("httpx", "http")
+                line = line.replace("httpss", "https")
                 urls.append(line)
     return list(dict.fromkeys(urls))
 
