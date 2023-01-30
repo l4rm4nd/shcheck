@@ -241,25 +241,13 @@ def parse_nmapfile(nfile):
 
     for host in report.hosts:
         for service in host.services:
-            filtered_services = "http,http-alt,http-mgmt,http-proxy,http-rpc-epmap,https,https-alt,https-wmap,http-wmap,httpx"
-            if (service.state == "open") and (service.service in filtered_services.split(",")):
-                line = "{service}{s}://{hostname}:{port}"
-                line = line.replace("{xmlfile}", nfile)
+            if (service.state == "open") and ("http" in service.service):
+                line = "http{s}://{hostname}:{port}"
                 line = line.replace("{hostname}", host.address if not host.hostnames else host.hostnames[0]) # TODO: Fix naive code.
                 line = line.replace("{hostnames}", host.address if not host.hostnames else ", ".join(list(set(host.hostnames)))) # TODO: Fix naive code.
                 line = line.replace("{ip}", host.address)
-                line = line.replace("{service}", service.service)
-                line = line.replace("{s}", "s" if service.tunnel == "ssl" else "")
-                line = line.replace("{protocol}", service.protocol)
+                line = line.replace("{s}", "s" if (service.tunnel == "ssl" or "https" in service.service) else "")
                 line = line.replace("{port}", str(service.port))
-                line = line.replace("{state}", str(service.state))
-                line = line.replace("-alt", "")
-                line = line.replace("-mgmt", "")
-                line = line.replace("-proxy", "")
-                line = line.replace("-rpc-epmap", "")
-                line = line.replace("-wmap", "")
-                line = line.replace("httpx", "http")
-                line = line.replace("httpss", "https")
                 urls.append(line)
     return list(dict.fromkeys(urls))
 
